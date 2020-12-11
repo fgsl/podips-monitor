@@ -1,0 +1,93 @@
+<?php
+use Laminas\View\View;
+use App\Model\Monitor;
+
+$jsonError = '{"code": "0","message": "error","datetime" : "error", "remoteaddr": "error", "remotehost": error"}';
+/**
+ * @var $this View
+ */
+echo $this->headTitle('Home');
+?>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2><span class="mezzio-green">
+                Leitura do Kubernetes
+        </span></h2>
+        <p>
+<?php
+try {
+    $json = Monitor::getInstance()->getKubernetesReadingStatus();
+} catch (\Exception $e) {
+    $json = json_decode($jsonError);
+}
+
+?>            
+		code: <?=$json->code?><br/>
+		message: <?=$json->message?><br/>
+		datetime: <?=$json->datetime?><br/>
+		remote address: <?=$json->remoteaddr?><br/>
+		remote host: <?=$json->remotehost?>
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2><span class="mezzio-green">
+            Escrita na Fila            
+        </span></h2>
+        <p>
+<?php
+try {
+    $json = Monitor::getInstance()->getQueueWritingStatus();    
+} catch (\Exception $e) {
+    $json = json_decode($jsonError);
+}
+?>            
+		code: <?=$json->code?><br/>
+		message: <?=$json->message?><br/>
+		datetime: <?=$json->datetime?><br/>
+		remote address: <?=$json->remoteaddr?><br/>
+		remote host: <?=$json->remotehost?>		
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <h2><span class="mezzio-green">
+            Leitura da Fila            
+        </span></h2>
+        <p>
+<?php
+try {
+    $json = Monitor::getInstance()->getQueueReadingStatus();
+} catch (\Exception $e) {
+    $json = json_decode($jsonError);
+}
+?>            
+		code: <?=$json->code?><br/>
+		message: <?=$json->message?><br/>
+		datetime: <?=$json->datetime?><br/>
+		remote address: <?=$json->remoteaddr?><br/>
+		remote host: <?=$json->remotehost?>		
+        </p>
+    </div>
+    
+    <div class="col-md-4">
+        <h2><span class="mezzio-green">
+            Escrita no Fluentd            
+        </span></h2>
+        <p>
+<?php
+try {
+    $json = Monitor::getInstance()->getFluentdWritingStatus();
+} catch (\Exception $e) {
+    $json = json_decode($jsonError);
+}
+?>            
+		code: <?=$json->code?><br/>
+		message: <?=$json->message?><br/>
+		datetime: <?=$json->datetime?><br/>
+		remote address: <?=$json->remoteaddr?><br/>
+		remote host: <?=$json->remotehost?>		
+        </p>
+    </div>    
+</div>
