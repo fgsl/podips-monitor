@@ -39,7 +39,7 @@ class ConfigProvider
                 Handler\PodipsHandler::class        => Handler\PodipsHandler::class,
             ],
             'factories'  => [
-                Handler\HomePageHandler::class => Handler\HomePageHandlerFactory::class,
+                Handler\HomePageHandler::class      => Handler\HomePageHandlerFactory::class,
                 Handler\ApiHandler::class           => Handler\ApiHandlerFactory::class
                 
             ],

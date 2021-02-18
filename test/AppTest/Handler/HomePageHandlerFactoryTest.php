@@ -28,18 +28,6 @@ class HomePageHandlerFactoryTest extends TestCase
         $this->container->get(RouterInterface::class)->willReturn($router);
     }
 
-    public function testFactoryWithoutTemplate()
-    {
-        $factory = new HomePageHandlerFactory();
-        $this->container->has(TemplateRendererInterface::class)->willReturn(false);
-
-        $this->assertInstanceOf(HomePageHandlerFactory::class, $factory);
-
-        $homePage = $factory($this->container->reveal());
-
-        $this->assertInstanceOf(HomePageHandler::class, $homePage);
-    }
-
     public function testFactoryWithTemplate()
     {
         $this->container->has(TemplateRendererInterface::class)->willReturn(true);
