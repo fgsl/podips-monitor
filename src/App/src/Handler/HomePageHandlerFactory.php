@@ -19,7 +19,7 @@ class HomePageHandlerFactory
     public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $template = $container->get(TemplateRendererInterface::class);
-
+        
         $mail = new Mail($container->get('config')['mail']);
         
         return new HomePageHandler($template, $mail);

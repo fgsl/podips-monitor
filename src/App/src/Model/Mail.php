@@ -21,15 +21,20 @@ class Mail
     public function __construct(array $config)
     {
         $this->transport = new SmtpTransport();
-        $options = new SmtpOptions([
-            'name' => $config['name'],
-            'host' => $config['host'],
-            'connection_class' => 'login',
-            'connection_config' => [
-                'username' => $config['username'],
-                'password' => $config['password']
-            ]
-        ]);
+        try {
+            $options = new SmtpOptions([
+                'name' => $config['name'],
+                'host' => $config['host'],
+                'connection_class' => 'login',
+                'connection_config' => [
+                    'username' => $config['connection_config']['username'],
+                    'password' => $config['connection_config']['password']
+                ]
+            ]);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            $options = [];
+        }
         $this->transport->setOptions($options);
         $this->message = new Message();
         $this->message->setEncoding('UTF-8');
