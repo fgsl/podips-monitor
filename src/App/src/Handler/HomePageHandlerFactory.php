@@ -12,6 +12,7 @@ namespace App\Handler;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use App\Model\Mail;
 
 class HomePageHandlerFactory
 {
@@ -19,6 +20,8 @@ class HomePageHandlerFactory
     {
         $template = $container->get(TemplateRendererInterface::class);
 
-        return new HomePageHandler($template);
+        $mail = new Mail($container->get('config')['mail']);
+        
+        return new HomePageHandler($template, $mail);
     }
 }

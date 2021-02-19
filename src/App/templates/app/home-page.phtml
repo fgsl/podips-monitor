@@ -1,8 +1,6 @@
 <?php
 use Laminas\View\View;
-use App\Model\Monitor;
 
-$jsonError = '{"code": "0","message": "error","datetime" : "error", "remoteaddr": "error", "remotehost": error"}';
 /**
  * @var $this View
  */
@@ -12,41 +10,15 @@ echo $this->headTitle('Home');
 <div class="row">
     <div class="col-md-4">
         <h2><span class="mezzio-green">
-                Kubernetes Reading
+           Kubernetes Reading
         </span></h2>
-<?php
-try {
-    $json = Monitor::getInstance()->getKubernetesReadingStatus();
-} catch (\Exception $e) {
-    $json = json_decode($jsonError);
-}
-?>
-        <p style="color:<?=($json->code == 200 ? 'green' : 'red')?>"> 
-		code: <?=$json->code?><br/>
-		message: <?=$json->message?><br/>
-		datetime: <?=$json->datetime?><br/>
-		remote address: <?=$json->remoteaddr?><br/>
-		remote host: <?=$json->remotehost?>
-        </p>
+		<?=$this->kubernetesReadingStatusBlock?>
     </div>
     <div class="col-md-4">
         <h2><span class="mezzio-green">
             Queue Writing            
         </span></h2>
-<?php
-try {
-    $json = Monitor::getInstance()->getQueueWritingStatus();    
-} catch (\Exception $e) {
-    $json = json_decode($jsonError);
-}
-?>
-        <p style="color:<?=($json->code == 200 ? 'green' : 'red')?>">            
-		code: <?=$json->code?><br/>
-		message: <?=$json->message?><br/>
-		datetime: <?=$json->datetime?><br/>
-		remote address: <?=$json->remoteaddr?><br/>
-		remote host: <?=$json->remotehost?>
-        </p>
+		<?=$this->kubernetesReadingStatusBlock?>
     </div>
 </div>
 <div class="row">
@@ -54,39 +26,12 @@ try {
         <h2><span class="mezzio-green">
             Queue Reading            
         </span></h2>
-<?php
-try {
-    $json = Monitor::getInstance()->getQueueReadingStatus();
-} catch (\Exception $e) {
-    $json = json_decode($jsonError);
-}
-?>
-        <p style="color:<?=($json->code == 200 ? 'green' : 'red')?>">            
-		code: <?=$json->code?><br/>
-		message: <?=$json->message?><br/>
-		datetime: <?=$json->datetime?><br/>
-		remote address: <?=$json->remoteaddr?><br/>
-		remote host: <?=$json->remotehost?>		
-        </p>
-    </div>
-    
+		<?=$this->queueReadingStatusBlock?>
+    </div>    
     <div class="col-md-4">
         <h2><span class="mezzio-green">
             Fluentd Writing            
         </span></h2>
-<?php
-try {
-    $json = Monitor::getInstance()->getFluentdWritingStatus();
-} catch (\Exception $e) {
-    $json = json_decode($jsonError);
-}
-?>
-        <p style="color:<?=($json->code == 200 ? 'green' : 'red')?>">            
-		code: <?=$json->code?><br/>
-		message: <?=$json->message?><br/>
-		datetime: <?=$json->datetime?><br/>
-		remote address: <?=$json->remoteaddr?><br/>
-		remote host: <?=$json->remotehost?>		
-        </p>
+		<?=$this->fluentdWritingStatusBlock?>
     </div>    
 </div>

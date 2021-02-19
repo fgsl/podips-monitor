@@ -133,8 +133,9 @@ JSON;
     private function getJsonFile($path)
     {
         $datetime = date(\Datetime::ISO8601);
-        if (!file_exists($path)){
-            $json = <<<JSON
+        try {
+            if (!file_exists($path)){
+                $json = <<<JSON
 {
     "code" : "0",
     "message" : "no message",
@@ -143,9 +144,13 @@ JSON;
     "remotehost" : "unknown"
 }
 JSON;
-            file_put_contents($path, $json);
+                file_put_contents($path, $json);
+            }
+            $json = json_decode(file_get_contents($path));            
+        } catch (\Exception $e) {
+            $jsonError = '{"code": "0","message": "error","datetime" : "error", "remoteaddr": "error", "remotehost": error"}';
+            $json = json_decode($jsonError);            
         }
-        return json_decode(file_get_contents($path));        
-    }
-    
+        return $json;
+   }    
 }

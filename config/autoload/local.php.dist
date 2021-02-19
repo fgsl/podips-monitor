@@ -11,11 +11,14 @@ declare(strict_types=1);
 
 return [
 	'mail' => [
-            'name' => 'servername',
-            'host' => 'dns_or_ip',
+            'name' => 'dns',
+            'host' => 'ip',
             'connection_config' => [
-                'username' => 'username',
-                'password' => 'password'
-            ]
-	]	
+                'username' => '',
+                'password' => ''
+            ],
+	        'sendermail'       => '',
+	        'sendername'       => '',
+	        'recipientmail'    => ''
+	]
 ];
