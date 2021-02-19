@@ -39,7 +39,7 @@ class Mail
         $this->message = new Message();
         $this->message->setEncoding('UTF-8');
         $this->message->addFrom($config['sendermail'], $config['sendername']);
-        $this->message->addTo($config['recipientmail']);        
+        $this->message->addTo($config['recipientmail']);
     }
     
     /**

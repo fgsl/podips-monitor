@@ -21,7 +21,7 @@ class HomePageHandlerFactory
         $template = $container->get(TemplateRendererInterface::class);
         
         $mail = new Mail($container->get('config')['mail']);
-        
+
         return new HomePageHandler($template, $mail);
     }
 }

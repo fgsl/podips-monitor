@@ -25,30 +25,30 @@ class HomePageHandler implements RequestHandlerInterface
 
     public function __construct(TemplateRendererInterface $template, Mail $mail) {
         $this->template = $template;
-        $this->mail     = $mail;         
+        $this->mail     = $mail;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $json = Monitor::getInstance()->getKubernetesReadingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
-        $kubernetesReadingStatusBlock = $this->getBlock($json, $color);
-        $this->sendMessage($json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);
+        $kubernetesReadingStatusBlock = $this->getBlock($json, $color);        
+        $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);
         
         $json = Monitor::getInstance()->getQueueWritingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $queueWritingStatusBlock = $this->getBlock($json, $color);
-        $this->sendMessage($json->code, 'Fail to write Queue', $queueWritingStatusBlock);
+        $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock);
         
         $json = Monitor::getInstance()->getQueueReadingStatus();    
         $color = ($json->code == 200 ? 'green' : 'red');
         $queueReadingStatusBlock = $this->getBlock($json, $color);   
-        $this->sendMessage($json->code, 'Fail to read Queue', $queueReadingStatusBlock);
+        $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock);
         
         $json = Monitor::getInstance()->getFluentdWritingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $fluentdWritingStatusBlock = $this->getBlock($json, $color);
-        $this->sendMessage($json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
+        $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
         
         $data = [
             'kubernetesReadingStatusBlock'  => $kubernetesReadingStatusBlock,
@@ -79,7 +79,7 @@ BLOCK;
         return $block;
     }
     
-    private function sendMessage(int $code, string $subject, string $block)
+    private function sendMessage(int $code, string $subject, string $block): void
     {
         if ($code != 200){
             try {
