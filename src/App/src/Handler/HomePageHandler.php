@@ -86,7 +86,7 @@ BLOCK;
     private function sendMessage(int $code, string $subject, string $block): string
     {        
         $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
-        $result = 'E-mail sendindg is disabled';
+        $result = 'E-mail sending is disabled';
         if ($code != 200 && $sendMail){
             try {
                 $this->mail->sendMessage($subject, $block);
