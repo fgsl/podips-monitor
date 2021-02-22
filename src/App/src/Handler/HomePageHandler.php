@@ -81,7 +81,8 @@ BLOCK;
     
     private function sendMessage(int $code, string $subject, string $block): void
     {
-        if ($code != 200){
+        $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
+        if ($code != 200 && $sendMail){
             try {
                 $this->mail->sendMessage($subject, $block);
             } catch (\Exception $e) {
