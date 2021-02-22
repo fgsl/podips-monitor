@@ -73,7 +73,7 @@ class HomePageHandler implements RequestHandlerInterface
      * @param string $color
      * @return string
      */
-    private function getBlock(Object $json, string $color, string $mailStatus):string
+    private function getBlock(Object $json, string $color):string
     {
         $block = <<<BLOCK
         <p style="color: $color">
@@ -92,7 +92,7 @@ BLOCK;
         $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
         if ($code != 200 && $sendMail){
             try {
-                $result = $this->mail->sendMessage($subject, $block);
+                $this->mail->sendMessage($subject, $block);
                 $result = 'Notification sent by e-mail';
             } catch (\Exception $e) {
                 error_log($e->getMessage());
