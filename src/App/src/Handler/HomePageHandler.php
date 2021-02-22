@@ -33,28 +33,36 @@ class HomePageHandler implements RequestHandlerInterface
         $json = Monitor::getInstance()->getKubernetesReadingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $kubernetesReadingStatusBlock = $this->getBlock($json, $color);        
-        $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);
+        $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);
+        $kubernetesReadingStatusBlock .= "<p>$kubernetesReadingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getQueueWritingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $queueWritingStatusBlock = $this->getBlock($json, $color);
-        $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock);
+        $queueWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock);
+        $queueWritingStatusBlock .= "<p>$queueWritingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getQueueReadingStatus();    
         $color = ($json->code == 200 ? 'green' : 'red');
         $queueReadingStatusBlock = $this->getBlock($json, $color);   
-        $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock);
+        $queueReadingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock);
+        $queueReadingStatusBlock .= "<p>$queueReadingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getFluentdWritingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $fluentdWritingStatusBlock = $this->getBlock($json, $color);
-        $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
+        $fluentdWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
+        $fluentdWritingStatusBlock .= "<p>$fluentdWritingSendMailStatus</p>";
         
         $data = [
-            'kubernetesReadingStatusBlock'  => $kubernetesReadingStatusBlock,
-            'queueWritingStatusBlock'       => $queueWritingStatusBlock,
-            'queueReadingStatusBlock'       => $queueReadingStatusBlock,
-            'fluentdWritingStatusBlock'     => $fluentdWritingStatusBlock
+            'kubernetesReadingStatusBlock'      => $kubernetesReadingStatusBlock,
+            'queueWritingStatusBlock'           => $queueWritingStatusBlock,
+            'queueReadingStatusBlock'           => $queueReadingStatusBlock,
+            'fluentdWritingStatusBlock'         => $fluentdWritingStatusBlock,
+            'kubernetesReadingSendMailStatus'   => $kubernetesReadingSendMailStatus,
+            'queueWritingSendMailStatus'        => $queueWritingSendMailStatus,
+            'queueReadingSendMailStatus'        => $queueReadingSendMailStatus,
+            'fluentdWritingSendMailStatus'      => $fluentdWritingSendMailStatus
         ];
 
         return new HtmlResponse($this->template->render('app::home-page', $data));
@@ -65,7 +73,7 @@ class HomePageHandler implements RequestHandlerInterface
      * @param string $color
      * @return string
      */
-    private function getBlock(Object $json, string $color):string
+    private function getBlock(Object $json, string $color, string $mailStatus):string
     {
         $block = <<<BLOCK
         <p style="color: $color">
@@ -84,10 +92,13 @@ BLOCK;
         $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
         if ($code != 200 && $sendMail){
             try {
-                $this->mail->sendMessage($subject, $block);
+                $result = $this->mail->sendMessage($subject, $block);
+                $result = 'Notification sent by e-mail';
             } catch (\Exception $e) {
                 error_log($e->getMessage());
+                $result = $e->getMessage();
             }
         }
+        return $result;
     }
 }
