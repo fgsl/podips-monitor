@@ -58,11 +58,7 @@ class HomePageHandler implements RequestHandlerInterface
             'kubernetesReadingStatusBlock'      => $kubernetesReadingStatusBlock,
             'queueWritingStatusBlock'           => $queueWritingStatusBlock,
             'queueReadingStatusBlock'           => $queueReadingStatusBlock,
-            'fluentdWritingStatusBlock'         => $fluentdWritingStatusBlock,
-            'kubernetesReadingSendMailStatus'   => $kubernetesReadingSendMailStatus,
-            'queueWritingSendMailStatus'        => $queueWritingSendMailStatus,
-            'queueReadingSendMailStatus'        => $queueReadingSendMailStatus,
-            'fluentdWritingSendMailStatus'      => $fluentdWritingSendMailStatus
+            'fluentdWritingStatusBlock'         => $fluentdWritingStatusBlock
         ];
 
         return new HtmlResponse($this->template->render('app::home-page', $data));
@@ -87,7 +83,7 @@ BLOCK;
         return $block;
     }
     
-    private function sendMessage(int $code, string $subject, string $block): void
+    private function sendMessage(int $code, string $subject, string $block): string
     {
         $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
         if ($code != 200 && $sendMail){
