@@ -31,11 +31,11 @@ class HomePageHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $json = Monitor::getInstance()->getKubernetesReadingStatus();
-        $color = ($json->code == 200 ? 'green' : 'red');
-        $kubernetesReadingStatusBlock = $this->getBlock($json, $color);        
-        $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);
+        $color = ($json->code == 200 ? 'green' : 'red');       
+        $kubernetesReadingStatusBlock = $this->getBlock($json, $color);
+        $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);      
         $kubernetesReadingStatusBlock .= "<p>$kubernetesReadingSendMailStatus</p>";
-        
+
         $json = Monitor::getInstance()->getQueueWritingStatus();
         $color = ($json->code == 200 ? 'green' : 'red');
         $queueWritingStatusBlock = $this->getBlock($json, $color);
@@ -84,8 +84,9 @@ BLOCK;
     }
     
     private function sendMessage(int $code, string $subject, string $block): string
-    {
+    {        
         $sendMail = (bool) getenv('PODIPS_SEND_MAIL');
+        $result = 'E-mail sendindg is disabled';
         if ($code != 200 && $sendMail){
             try {
                 $this->mail->sendMessage($subject, $block);
