@@ -31,25 +31,25 @@ class HomePageHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $json = Monitor::getInstance()->getKubernetesReadingStatus();
-        $color = ($json->code == 200 ? 'green' : 'red');       
+        $color = $this->getColor($json);
         $kubernetesReadingStatusBlock = $this->getBlock($json, $color);
         $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);      
         $kubernetesReadingStatusBlock .= "<p>$kubernetesReadingSendMailStatus</p>";
 
         $json = Monitor::getInstance()->getQueueWritingStatus();
-        $color = ($json->code == 200 ? 'green' : 'red');
+        $color = $this->getColor($json);
         $queueWritingStatusBlock = $this->getBlock($json, $color);
         $queueWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock);
         $queueWritingStatusBlock .= "<p>$queueWritingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getQueueReadingStatus();    
-        $color = ($json->code == 200 ? 'green' : 'red');
+        $color = $this->getColor($json);
         $queueReadingStatusBlock = $this->getBlock($json, $color);   
         $queueReadingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock);
         $queueReadingStatusBlock .= "<p>$queueReadingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getFluentdWritingStatus();
-        $color = ($json->code == 200 ? 'green' : 'red');
+        $color = $this->getColor($json);
         $fluentdWritingStatusBlock = $this->getBlock($json, $color);
         $fluentdWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
         $fluentdWritingStatusBlock .= "<p>$fluentdWritingSendMailStatus</p>";
@@ -97,5 +97,31 @@ BLOCK;
             }
         }
         return $result;
+    }
+    
+    /**
+     * @param string $jsonDateTime
+     * @return int
+     */
+    private function getElapsedTime(string $jsonDateTime): int
+    {
+        $d1 = new \DateTime($jsonDateTime);
+        $d2 = new \DateTime('NOW');
+        $interval = $d2->diff($d1);
+        $minutes = ($interval->s / 60);
+        $minutes += $interval->i;
+        $minutes += ($interval->h * 60);   
+        
+        return (int) $minutes;
+    }
+    
+    private function getColor(Object $json): string
+    {
+        $color = ($json->code == 200 ? 'green' : 'red');        
+        $elapsedTime = $this->getElapsedTime($json->datetime);
+        if ($elapsedTime > 5 && $color == 'green') {            
+            $color = 'orange';
+        }        
+        return $color;
     }
 }
