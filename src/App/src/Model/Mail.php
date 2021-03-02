@@ -35,11 +35,15 @@ class Mail
             error_log($e->getMessage());
             $options = [];
         }
+        $recipientmail = getenv('PODIPS_RECIPIENT_MAIL');
+        if (empty($recipientmail)) {
+            $recipientmail = $config['recipientmail'];
+        }
         $this->transport->setOptions($options);
         $this->message = new Message();
         $this->message->setEncoding('UTF-8');
         $this->message->addFrom($config['sendermail'], $config['sendername']);
-        $this->message->addTo($config['recipientmail']);
+        $this->message->addTo($recipientmail);
     }
     
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @OA\Info(title="Podips Monitor", version="1.0.0")
+ * @OA\Info(title="Podips Monitor", version="1.1.0")
  * @copyright 2020 FGSL
  */
 declare(strict_types=1);
