@@ -30,28 +30,30 @@ class HomePageHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $podipsHost = $_SERVER['REQUEST_URI'];
+    
         $json = Monitor::getInstance()->getKubernetesReadingStatus();
         $color = $this->getColor($json);
         $kubernetesReadingStatusBlock = $this->getBlock($json, $color);
-        $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock);      
+        $kubernetesReadingSendMailStatus = $this->sendMessage((int)$json->code,'Fail to read Kubernetes', $kubernetesReadingStatusBlock . "<p>$podipsHost</p>");      
         $kubernetesReadingStatusBlock .= "<p>$kubernetesReadingSendMailStatus</p>";
 
         $json = Monitor::getInstance()->getQueueWritingStatus();
         $color = $this->getColor($json);
         $queueWritingStatusBlock = $this->getBlock($json, $color);
-        $queueWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock);
-        $queueWritingStatusBlock .= "<p>$queueWritingSendMailStatus</p>";
+        $queueWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Queue', $queueWritingStatusBlock . "<p>$podipsHost</p>");
+        $queueWritingStatusBlock .= "<p>$queueWritingSendMailStatus</p><p>$podipsHost</p>";
         
         $json = Monitor::getInstance()->getQueueReadingStatus();    
         $color = $this->getColor($json);
         $queueReadingStatusBlock = $this->getBlock($json, $color);   
-        $queueReadingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock);
+        $queueReadingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to read Queue', $queueReadingStatusBlock . "<p>$podipsHost</p>");
         $queueReadingStatusBlock .= "<p>$queueReadingSendMailStatus</p>";
         
         $json = Monitor::getInstance()->getFluentdWritingStatus();
         $color = $this->getColor($json);
         $fluentdWritingStatusBlock = $this->getBlock($json, $color);
-        $fluentdWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock);
+        $fluentdWritingSendMailStatus = $this->sendMessage((int)$json->code, 'Fail to write Fluentd', $fluentdWritingStatusBlock . "<p>$podipsHost</p>");
         $fluentdWritingStatusBlock .= "<p>$fluentdWritingSendMailStatus</p>";
         
         $data = [
